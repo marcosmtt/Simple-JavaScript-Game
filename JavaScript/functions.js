@@ -12,7 +12,7 @@ function main() {
         WIDTH = 800;
     }
 
-    //set game screen size
+    //set canvas size
     canvas = document.createElement("canvas");
     canvas.height = HEIGHT;
     canvas.width = WIDTH;

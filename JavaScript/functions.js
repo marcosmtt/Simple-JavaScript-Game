@@ -3,6 +3,7 @@ let ctx; //Context
 let WIDTH, HEIGHT;
 let frames = 0;
 let character;
+var velocidade = 4;
 
 ground = {
     //This variable is used to create the game ground
@@ -19,11 +20,12 @@ ground = {
 
 obstacles = {
     objs: [],
-    colors: ["#ffbc1c", "#ff1c1c", "#ff85e1", "#52a7ff", "#78ff5d"],
+    colors: ["#2eb82e", "#e6b800", "#e65c00", "#002db3", "#b300b3"],
+    insertTime: 0,
 
     insertObj: function () { //Create into the canvas a new obstacle with these particulars
         this.objs.push({
-            x: 200, //Initial obstacle position at X 
+            x: WIDTH, //Initial obstacle position at X 
             width: 30 + Math.floor(21 * Math.random()),
             height: 30 + Math.floor(120 * Math.random()),
             color: this.colors[Math.floor(5 * Math.random())]
@@ -31,13 +33,22 @@ obstacles = {
     },
 
     update: function () {
-
-    },
-    draw: function () {
-        tam = this.objs.length;
-
-        for (var i = 0; i < tam; i++) {
+        var size = this.objs.lenght;
+        for (var i = 0; i < size; i++) {
             var obs = this.objs[i];
+            obs.x -= velocidade;
+
+            if (obs.x <= -obs.width) {
+                this.objs.splice(i, 1);
+                i--; //to fix a problem when try to access an element out of the array index
+                size--;
+            }
+        }
+    },
+
+    draw: function () {
+        for (let i = 0; i < this.objs.length; i++) {
+            let obs = this.objs[i];
             ctx.fillStyle = obs.color;
             ctx.fillRect(obs.x, ground.sizeY - obs.height, obs.width, obs.height);
         }
@@ -45,7 +56,6 @@ obstacles = {
 };
 
 function initCharacter(height) {
-
     let characterHeight = 50;
     let characterWidth = 50;
     maxJumps = 2;
@@ -93,7 +103,6 @@ function click(event) {
 }
 
 function main() {
-
     WIDTH = window.innerWidth; //Largura
     HEIGHT = window.innerHeight;//Altura
 
@@ -128,7 +137,9 @@ function run() {
 
 function update() {
     frames++;
+
     character.update();
+    obstacles.update();
 }
 
 function draw() {

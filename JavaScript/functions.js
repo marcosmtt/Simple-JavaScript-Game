@@ -18,36 +18,44 @@ let ground = {
 };
 
 function initCharacter(height) {
+
+    let characterHeight = 50;
+    let characterWidth = 50;
+    maxJumps = 2;
+
     return {
         //Set basic character parameters and functions
-        height: 50,
-        width: 50,
         x: 50,
-        y: height / 2 - this.height,
+        jumpCount: 0,
+        y: height / 2 - characterHeight,
         color: "#ff4e4e",
 
 
         //Adding some physics:
-        gravity: 0.7,
+        gravity: 1.2,
         speed: 1.2,
-        jumpForce: 15,
+        jumpForce: 20,
 
         update: function () {
             this.speed += this.gravity;
             this.y += this.speed;
 
-            if (this.y >= ground.sizeY - this.height) {
-                this.y = ground.sizeY - this.height;
+            if (this.y >= ground.sizeY - characterHeight) {
+                this.y = ground.sizeY - characterHeight;
+                this.jumpCount = 0;
             }
         },
 
         jump: function () {
-            this.speed = -this.jumpForce;
+            if (this.jumpCount < maxJumps) {
+                this.speed = -this.jumpForce;
+                this.jumpCount++;
+            }
         },
 
         draw: function () {
             ctx.fillStyle = this.color;
-            ctx.fillRect(this.x, this.y, this.height, this.width);
+            ctx.fillRect(this.x, this.y, characterHeight, characterWidth);
         }
     }
 };
@@ -58,9 +66,9 @@ function click(event) {
 }
 
 function main() {
+
     WIDTH = window.innerWidth; //Largura
     HEIGHT = window.innerHeight;//Altura
-
 
     if (HEIGHT >= 500) {
         WIDTH = 800;
@@ -68,7 +76,6 @@ function main() {
     }
 
     character = initCharacter(HEIGHT);
-
 
     //set canvas size
     canvas = document.createElement("canvas");

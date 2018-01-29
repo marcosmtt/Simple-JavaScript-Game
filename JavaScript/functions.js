@@ -17,20 +17,32 @@ ground = {
 
 };
 
-obstacle = {
+obstacles = {
     objs: [],
-    objColors: ["#009933", "#e6b800", "#ff6600"],
+    colors: ["#ffbc1c", "#ff1c1c", "#ff85e1", "#52a7ff", "#78ff5d"],
 
-    objInsert: function () {
+    insertObj: function () { //Create into the canvas a new obstacle with these particulars
         this.objs.push({
-            xPosition: WIDTH,
-            objWidth: 30 + Math.floor(20 * Math.random()),
-            objHeight: 30 + Math.floor(100 * Math.random()),
-            objColor: this.objColors[Math.floor(4 * Math.random())]
-        });
-    }
+            x: 200, //Initial obstacle position at X 
+            width: 30 + Math.floor(21 * Math.random()),
+            height: 30 + Math.floor(120 * Math.random()),
+            color: this.colors[Math.floor(5 * Math.random())]
+        })
+    },
 
-}
+    update: function () {
+
+    },
+    draw: function () {
+        tam = this.objs.length;
+
+        for (var i = 0; i < tam; i++) {
+            var obs = this.objs[i];
+            ctx.fillStyle = obs.color;
+            ctx.fillRect(obs.x, ground.sizeY - obs.height, obs.width, obs.height);
+        }
+    }
+};
 
 function initCharacter(height) {
 
@@ -124,6 +136,7 @@ function draw() {
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     ground.draw();
+    obstacles.draw();
     character.draw();
 }
 

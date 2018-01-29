@@ -3,9 +3,9 @@ let ctx; //Context
 let WIDTH, HEIGHT;
 let frames = 0;
 let character;
-var velocidade = 4;
+const objSpeed = 5;
 
-ground = {
+const ground = {
     //This variable is used to create the game ground
     sizeY: 550,
     height: 50,
@@ -18,7 +18,7 @@ ground = {
 
 };
 
-obstacles = {
+const obstacles = {
     objs: [],
     colors: ["#2eb82e", "#e6b800", "#e65c00", "#002db3", "#b300b3"],
     insertTime: 0,
@@ -27,20 +27,29 @@ obstacles = {
         this.objs.push({
             x: WIDTH, //Initial obstacle position at X 
             width: 30 + Math.floor(21 * Math.random()),
-            height: 30 + Math.floor(120 * Math.random()),
+            height: 30 + Math.floor(100 * Math.random()),
             color: this.colors[Math.floor(5 * Math.random())]
-        })
+        });
+
+        this.insertTime = 5 + Math.floor(80 * Math.random());
     },
 
     update: function () {
-        var size = this.objs.lenght;
-        for (var i = 0; i < size; i++) {
-            var obs = this.objs[i];
-            obs.x -= velocidade;
+        if (this.insertTime == 0) {
+            this.insertObj();
+        } else {
+            this.insertTime--;
+        }
+
+        let size = this.objs.length;
+        for (let i = 0; i < size; i++) {
+            let obs = this.objs[i];
+
+            obs.x -= objSpeed;
 
             if (obs.x <= -obs.width) {
                 this.objs.splice(i, 1);
-                i--; //to fix a problem when try to access an element out of the array index
+                i--;
                 size--;
             }
         }
@@ -69,8 +78,8 @@ function initCharacter(height) {
 
 
         //Adding some physics:
-        gravity: 1.2,
-        speed: 1.2,
+        gravity: 1,
+        speed: 1.4,
         jumpForce: 20,
 
         update: function () {

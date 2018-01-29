@@ -1,10 +1,10 @@
 let canvas;
 let ctx; //Context
-let HEIGHT, WIDTH;
+let WIDTH, HEIGHT;
 let frames = 0;
 let character;
 
-let ground = {
+ground = {
     //This variable is used to create the game ground
     sizeY: 550,
     height: 50,
@@ -16,6 +16,21 @@ let ground = {
     }
 
 };
+
+obstacle = {
+    objs: [],
+    objColors: ["#009933", "#e6b800", "#ff6600"],
+
+    objInsert: function () {
+        this.objs.push({
+            xPosition: WIDTH,
+            objWidth: 30 + Math.floor(20 * Math.random()),
+            objHeight: 30 + Math.floor(100 * Math.random()),
+            objColor: this.objColors[Math.floor(4 * Math.random())]
+        });
+    }
+
+}
 
 function initCharacter(height) {
 

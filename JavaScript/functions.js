@@ -56,8 +56,8 @@ const obstacles = {
 
             obs.x -= objSpeed;
 
-            if (initCharacter.characterWidth < obs.width && initCharacter.x + initCharacter.characterWidth >= obs.x
-                && initCharacter.y + initCharacter.characterHeight >= ground.sizeY - obs.height) {
+            if (character.x < obs.x + obs.width && character.x + character.width >= obs.x
+                && character.y + character.height >= ground.y - obstacles.height) {
 
                 gameState = states.gameOver; //Lembrete: - Pegar os atributos do character para verificar a colisão
 
@@ -179,6 +179,7 @@ function update() {
     } else if (gameState == states.gameOver) {
         obstacles.clean();
     }
+
 }
 
 function draw() {

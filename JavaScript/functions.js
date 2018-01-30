@@ -56,12 +56,21 @@ const obstacles = {
 
             obs.x -= objSpeed;
 
-            if (obs.x <= -obs.width) {
+            if (initCharacter.characterWidth < obs.width && initCharacter.x + initCharacter.characterWidth >= obs.x
+                && initCharacter.y + initCharacter.characterHeight >= ground.sizeY - obs.height) {
+
+                gameState = states.gameOver; //Lembrete: - Pegar os atributos do character para verificar a colisão
+
+            } else if (obs.x <= -obs.width) {
                 this.objs.splice(i, 1);
                 i--;
                 size--;
             }
         }
+    },
+
+    clean: function () {
+        this.objs = [];
     },
 
     draw: function () {
@@ -74,9 +83,9 @@ const obstacles = {
 };
 
 function initCharacter(height) {
-    let characterHeight = 50;
-    let characterWidth = 50;
-    maxJumps = 2;
+    const characterHeight = 50;
+    const characterWidth = 50;
+    const maxJumps = 2;
 
     return {
         //Set basic character parameters and functions
@@ -167,6 +176,8 @@ function update() {
 
     if (gameState == states.playing) {
         obstacles.update();
+    } else if (gameState == states.gameOver) {
+        obstacles.clean();
     }
 }
 

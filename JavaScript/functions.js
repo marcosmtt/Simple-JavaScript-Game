@@ -4,6 +4,15 @@ let WIDTH, HEIGHT;
 let frames = 0;
 let character;
 const objSpeed = 5;
+let gameState;
+
+const states = {
+    play: 0,
+    playing: 1,
+    gameOver: 2
+};
+
+//===========  OBJECTS ============
 
 const ground = {
     //This variable is used to create the game ground
@@ -78,9 +87,9 @@ function initCharacter(height) {
 
 
         //Adding some physics:
-        gravity: 1,
+        gravity: 1.5,
         speed: 1.4,
-        jumpForce: 20,
+        jumpForce: 25,
 
         update: function () {
             this.speed += this.gravity;
@@ -106,9 +115,16 @@ function initCharacter(height) {
     }
 };
 
+//=============  GAME FUNCTIONS ===================
 
 function click(event) {
-    character.jump();
+    if (gameState == states.play) {
+        gameState = states.playing;
+    } if (gameState == states.playing) {
+        character.jump();
+    } else if (gameState == states.gameOver) {
+        gameState = states.play;
+    }
 }
 
 function main() {
@@ -134,6 +150,7 @@ function main() {
     document.body.appendChild(canvas);
     document.addEventListener("mousedown", click);
 
+    gameState = states.play;
     run();
 }
 
@@ -146,9 +163,11 @@ function run() {
 
 function update() {
     frames++;
-
     character.update();
-    obstacles.update();
+
+    if (gameState == states.playing) {
+        obstacles.update();
+    }
 }
 
 function draw() {
@@ -156,10 +175,19 @@ function draw() {
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     ground.draw();
-    obstacles.draw();
     character.draw();
+
+    if (gameState == states.play) {
+        ctx.fillStyle = "green";
+        ctx.fillRect(WIDTH / 2 - 50, HEIGHT / 2 - 50, 100, 100);
+    } else if (gameState == states.playing) {
+        obstacles.draw();
+    } else if (gameState == states.gameOver) {
+        ctx.fillStyle = "red";
+        ctx.fillRect(WIDTH / 2 - 50, HEIGHT / 2 - 50, 100, 100);
+    }
 }
 
-//inicializa o jogo
+//Start the game
 main();
 

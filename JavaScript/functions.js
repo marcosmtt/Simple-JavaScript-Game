@@ -20,7 +20,7 @@ const ground = {
     height: 50,
     color: "#803300",
 
-    draw: function () { //método
+    render: function () { //método
         ctx.fillStyle = this.color;
         ctx.fillRect(0, this.sizeY, WIDTH, this.height);
     }
@@ -35,8 +35,8 @@ const obstacles = {
     insertObj: function () { //Create into the canvas a new obstacle with these particulars
         this.objs.push({
             x: WIDTH, //Initial obstacle position at X 
-            width: 30 + Math.floor(21 * Math.random()),
-            height: 30 + Math.floor(100 * Math.random()),
+            obsWidth: 30 + Math.floor(21 * Math.random()),
+            obsHeight: 30 + Math.floor(100 * Math.random()),
             color: this.colors[Math.floor(5 * Math.random())]
         });
 
@@ -44,24 +44,22 @@ const obstacles = {
     },
 
     update: function () {
-        if (this.insertTime == 0) {
+        if (this.insertTime == 0)
             this.insertObj();
-        } else {
+        else
             this.insertTime--;
-        }
 
         let size = this.objs.length;
         for (let i = 0; i < size; i++) {
             let obs = this.objs[i];
+            let height = parseInt(obs.obsHeight); //Temporary solution to solve a problem
 
             obs.x -= objSpeed;
 
-            if (character.x < obs.x + obs.width && character.x + character.width >= obs.x
-                && character.y + character.height >= ground.y - obstacles.height) {
-
+            if (character.x < obs.x + obs.obsWidth && character.x + character.charWidth >= obs.x
+                && character.y + character.charHeight >= ground.sizeY - height)
                 gameState = states.gameOver; //Lembrete: - Pegar os atributos do character para verificar a colisão
-
-            } else if (obs.x <= -obs.width) {
+            else if (obs.x <= -obs.obsWidth) {
                 this.objs.splice(i, 1);
                 i--;
                 size--;
@@ -73,11 +71,11 @@ const obstacles = {
         this.objs = [];
     },
 
-    draw: function () {
+    render: function () {
         for (let i = 0; i < this.objs.length; i++) {
             let obs = this.objs[i];
             ctx.fillStyle = obs.color;
-            ctx.fillRect(obs.x, ground.sizeY - obs.height, obs.width, obs.height);
+            ctx.fillRect(obs.x, ground.sizeY - obs.obsHeight, obs.obsWidth, obs.obsHeight);
         }
     }
 };
@@ -89,12 +87,12 @@ function initCharacter(height) {
 
     return {
         //Set basic character parameters and functions
-        x: 50,
+        charWidth: characterWidth,
+        charHeight: characterHeight,
+        x: 50, //Initial position in X axis
         jumpCount: 0,
-        y: height / 2 - characterHeight,
-        color: "#ff4e4e",
-
-
+        y: height / 2 - characterHeight, //Position in Y axis
+        characterColor: "#ff4e4e",
         //Adding some physics:
         gravity: 1.5,
         speed: 1.4,
@@ -117,8 +115,8 @@ function initCharacter(height) {
             }
         },
 
-        draw: function () {
-            ctx.fillStyle = this.color;
+        render: function () {
+            ctx.fillStyle = this.characterColor;
             ctx.fillRect(this.x, this.y, characterHeight, characterWidth);
         }
     }
@@ -127,13 +125,14 @@ function initCharacter(height) {
 //=============  GAME FUNCTIONS ===================
 
 function click(event) {
-    if (gameState == states.play) {
-        gameState = states.playing;
-    } if (gameState == states.playing) {
+
+    if (gameState == states.playing)
         character.jump();
-    } else if (gameState == states.gameOver) {
+    else if (gameState == states.play)
+        gameState = states.playing;
+    else if (gameState == states.gameOver)
         gameState = states.play;
-    }
+
 }
 
 function main() {
@@ -165,7 +164,7 @@ function main() {
 
 function run() {
     update();
-    draw();
+    render();
 
     window.requestAnimationFrame(run);
 }
@@ -182,18 +181,18 @@ function update() {
 
 }
 
-function draw() {
+function render() {
     ctx.fillStyle = "#66c2ff";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-    ground.draw();
-    character.draw();
+    ground.render();
+    character.render();
 
     if (gameState == states.play) {
         ctx.fillStyle = "green";
         ctx.fillRect(WIDTH / 2 - 50, HEIGHT / 2 - 50, 100, 100);
     } else if (gameState == states.playing) {
-        obstacles.draw();
+        obstacles.render();
     } else if (gameState == states.gameOver) {
         ctx.fillStyle = "red";
         ctx.fillRect(WIDTH / 2 - 50, HEIGHT / 2 - 50, 100, 100);

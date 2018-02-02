@@ -96,15 +96,16 @@ function initCharacter(height) {
         //Adding some physics:
         gravity: 1.5,
         speed: 1.4,
-        jumpForce: 25,
+        jumpForce: 27,
 
         update: function () {
             this.speed += this.gravity;
             this.y += this.speed;
 
-            if (this.y >= ground.sizeY - characterHeight) {
+            if (this.y >= ground.sizeY - characterHeight && gameState != states.gameOver) {
                 this.y = ground.sizeY - characterHeight;
                 this.jumpCount = 0;
+                this.speed = 0;
             }
         },
 
@@ -130,8 +131,11 @@ function click(event) {
         character.jump();
     else if (gameState == states.play)
         gameState = states.playing;
-    else if (gameState == states.gameOver)
+    else if (gameState == states.gameOver && character.y >= 2 * HEIGHT) { //This 2nd condition creates a delay to restart the game
         gameState = states.play;
+        character.speed = 0;
+        character.y = HEIGHT / 2 - character.charHeight;
+    }
 
 }
 
@@ -173,11 +177,11 @@ function update() {
     frames++;
     character.update();
 
-    if (gameState == states.playing) {
+    if (gameState == states.playing)
         obstacles.update();
-    } else if (gameState == states.gameOver) {
+    else if (gameState == states.gameOver)
         obstacles.clean();
-    }
+
 
 }
 

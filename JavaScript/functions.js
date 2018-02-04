@@ -35,7 +35,7 @@ const obstacles = {
     insertObj: function () { //Create into the canvas a new obstacle with these particulars
         this.objs.push({
             x: WIDTH, //Initial obstacle position at X 
-            obsWidth: 30 + Math.floor(21 * Math.random()),
+            obsWidth: 40,
             obsHeight: 30 + Math.floor(100 * Math.random()),
             color: this.colors[Math.floor(5 * Math.random())]
         });
@@ -52,13 +52,15 @@ const obstacles = {
         let size = this.objs.length;
         for (let i = 0; i < size; i++) {
             let obs = this.objs[i];
-            let height = parseInt(obs.obsHeight); //Temporary solution to solve a problem
+            let height = parseInt(obs.obsHeight);
 
             obs.x -= objSpeed;
 
             if (character.x < obs.x + obs.obsWidth && character.x + character.charWidth >= obs.x
                 && character.y + character.charHeight >= ground.sizeY - height)
-                gameState = states.gameOver; //Lembrete: - Pegar os atributos do character para verificar a colisão
+                gameState = states.gameOver;
+            else if (obs.x < character.x)
+                score++;
             else if (obs.x <= -obs.obsWidth) {
                 this.objs.splice(i, 1);
                 i--;
@@ -84,6 +86,7 @@ function initCharacter(height) {
     const characterHeight = 50;
     const characterWidth = 50;
     const maxJumps = 2;
+    let score = 0;
 
     return {
         //Set basic character parameters and functions
@@ -93,7 +96,7 @@ function initCharacter(height) {
         jumpCount: 0,
         y: height / 2 - characterHeight, //Position in Y axis
         characterColor: "#ff4e4e",
-        //Adding some physics:
+
         gravity: 1.5,
         speed: 1.4,
         jumpForce: 27,
@@ -107,6 +110,11 @@ function initCharacter(height) {
                 this.jumpCount = 0;
                 this.speed = 0;
             }
+        },
+        reset: function () {
+            this.speed = 0;
+            this.y = height / 2 - characterHeight;
+            this.score = 0;
         },
 
         jump: function () {
@@ -132,9 +140,9 @@ function click(event) {
     else if (gameState == states.play)
         gameState = states.playing;
     else if (gameState == states.gameOver && character.y >= 2 * HEIGHT) { //This 2nd condition creates a delay to restart the game
+        obstacles.clean();
         gameState = states.play;
-        character.speed = 0;
-        character.y = HEIGHT / 2 - character.charHeight;
+        character.reset();
     }
 
 }
@@ -179,10 +187,6 @@ function update() {
 
     if (gameState == states.playing)
         obstacles.update();
-    else if (gameState == states.gameOver)
-        obstacles.clean();
-
-
 }
 
 function render() {

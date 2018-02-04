@@ -3,7 +3,7 @@ let ctx; //Context
 let WIDTH, HEIGHT;
 let frames = 0;
 let character;
-const objSpeed = 5;
+const objSpeed = 7;
 let gameState;
 
 const states = {
@@ -56,11 +56,13 @@ const obstacles = {
 
             obs.x -= objSpeed;
 
+            if (obs.x == 0)
+                character.score++;
+
             if (character.x < obs.x + obs.obsWidth && character.x + character.charWidth >= obs.x
                 && character.y + character.charHeight >= ground.sizeY - height)
                 gameState = states.gameOver;
-            else if (obs.x < character.x)
-                score++;
+
             else if (obs.x <= -obs.obsWidth) {
                 this.objs.splice(i, 1);
                 i--;
@@ -86,7 +88,6 @@ function initCharacter(height) {
     const characterHeight = 50;
     const characterWidth = 50;
     const maxJumps = 2;
-    let score = 0;
 
     return {
         //Set basic character parameters and functions
@@ -96,6 +97,8 @@ function initCharacter(height) {
         jumpCount: 0,
         y: height / 2 - characterHeight, //Position in Y axis
         characterColor: "#ff4e4e",
+        score: 0,
+        record: 0,
 
         gravity: 1.5,
         speed: 1.4,
@@ -111,6 +114,7 @@ function initCharacter(height) {
                 this.speed = 0;
             }
         },
+
         reset: function () {
             this.speed = 0;
             this.y = height / 2 - characterHeight;
@@ -151,8 +155,8 @@ function main() {
     WIDTH = window.innerWidth; //Largura
     HEIGHT = window.innerHeight;//Altura
 
-    if (HEIGHT >= 500) {
-        WIDTH = 800;
+    if (HEIGHT > 500) {
+        WIDTH = 700;
         HEIGHT = 600;
     }
 
@@ -192,9 +196,12 @@ function update() {
 function render() {
     ctx.fillStyle = "#66c2ff";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
-
     ground.render();
     character.render();
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "30px Arial";
+    ctx.fillText("Score: " + character.score, 10, 35);
 
     if (gameState == states.play) {
         ctx.fillStyle = "green";
@@ -204,6 +211,15 @@ function render() {
     } else if (gameState == states.gameOver) {
         ctx.fillStyle = "red";
         ctx.fillRect(WIDTH / 2 - 50, HEIGHT / 2 - 50, 100, 100);
+
+        ctx.save();
+        ctx.translate(WIDTH / 2, HEIGHT / 2);
+       
+        ctx.fillStyle = "#fff";
+        ctx.font = "50px Arial";
+        ctx.fillText(character.score, -ctx.measureText(character.score).width / 2, 19);
+
+        ctx.restore();
     }
 }
 

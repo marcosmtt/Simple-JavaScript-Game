@@ -5,6 +5,7 @@ let frames = 0;
 let character;
 const objSpeed = 7;
 let gameState;
+let record;
 
 const states = {
     play: 0,
@@ -118,6 +119,12 @@ function initCharacter(height) {
         reset: function () {
             this.speed = 0;
             this.y = height / 2 - characterHeight;
+
+            if (this.score > record) {
+                localStorage.setItem("record", this.score);
+                record = this.score;
+            }
+
             this.score = 0;
         },
 
@@ -175,6 +182,12 @@ function main() {
     document.addEventListener("mousedown", click);
 
     gameState = states.play;
+
+    record = localStorage.getItem("record");
+
+    if (record == null)
+        record = 0;
+
     run();
 }
 
@@ -202,7 +215,8 @@ function render() {
     ctx.fillStyle = "#fff";
     ctx.font = "30px Arial";
     ctx.fillText("Score: " + character.score, 10, 35);
-
+    
+    ctx.font = "50px Arial";
     if (gameState == states.play) {
         ctx.fillStyle = "green";
         ctx.fillRect(WIDTH / 2 - 50, HEIGHT / 2 - 50, 100, 100);
@@ -214,10 +228,16 @@ function render() {
 
         ctx.save();
         ctx.translate(WIDTH / 2, HEIGHT / 2);
-       
-        ctx.fillStyle = "#fff";
-        ctx.font = "50px Arial";
-        ctx.fillText(character.score, -ctx.measureText(character.score).width / 2, 19);
+
+        if (character.score > record) {
+            ctx.fillStyle = "#fff";
+            ctx.fillText("Novo Recorde!", -150, -65);
+        } else {
+            ctx.fillStyle = "#fff";
+            ctx.font = "50px Arial";
+            ctx.fillText("Recorde: " + record, -ctx.measureText("Recorde: " + record).width / 2, -65);
+            ctx.fillText(character.score, -ctx.measureText(character.score).width / 2, 19);
+        }
 
         ctx.restore();
     }

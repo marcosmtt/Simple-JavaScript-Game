@@ -215,7 +215,7 @@ function render() {
     ctx.fillStyle = "#fff";
     ctx.font = "30px Arial";
     ctx.fillText("Score: " + character.score, 10, 35);
-    
+
     ctx.font = "50px Arial";
     if (gameState == states.play) {
         ctx.fillStyle = "green";
